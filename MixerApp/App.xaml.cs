@@ -47,7 +47,7 @@ namespace MixerApp
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             m_window = new MainWindow();
-            m_window.AppWindow.Title = "Mixer App";
+            m_window.AppWindow.Title = "Mixer by Misclick";
             m_window.AppWindow.SetIcon("Assets/Icon.ico");
             m_window.ExtendsContentIntoTitleBar = true;
             m_window.Activate();

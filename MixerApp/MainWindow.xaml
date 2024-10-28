@@ -131,7 +131,7 @@
 
         <StackPanel Height="32" x:Name="TitleBar" Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
             <Image Source="ms-appx:///Assets/Square44x44Logo.targetsize-32.png" Width="24" VerticalAlignment="Center" Margin="8,0,4,0"/>
-            <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Mixer App"/>
+            <TextBlock VerticalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}" Text="Mixer by Misclick"/>
         </StackPanel>
         <!-- Main Command Bar -->
         <CommandBar Grid.ColumnSpan="2" Grid.Row="1" Margin="0,0,0,32" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalContentAlignment="Left">
@@ -188,15 +188,16 @@
                Layout="{StaticResource VerticalStackLayout}"
                ItemTemplate="{StaticResource SliderTemplate}"/>
         </ScrollViewer>
-        <TextBlock
+        <HyperlinkButton
             Grid.Column="0" Grid.Row="5"
             VerticalAlignment="Center"
             Margin="16,0,0,0"
-            Text="©️ 2024 Tomasz Kloczko, All rights reserved."/>
+            Content="©️ 2024 Misclick"
+            Foreground="{StaticResource TextFillColorPrimaryBrush}"/>
         <Button Grid.Column="1" Grid.Row="5" Margin="16,12,16,12" HorizontalAlignment="Right">
             <StackPanel Orientation="Horizontal">
+                <FontIcon Glyph="&#xE8A7;" FontSize="14" Margin="0,0,8,0"/>
                 <TextBlock>Documentation</TextBlock>
-                <FontIcon Glyph="&#xE8A7;" FontSize="12" Margin="4,0,0,0"/>
             </StackPanel>
         </Button>
         

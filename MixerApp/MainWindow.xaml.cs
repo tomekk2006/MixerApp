@@ -222,6 +222,10 @@ namespace MixerApp
             {
                 return false;
             }
+            catch (FileNotFoundException)
+            {
+                return false;
+            }
             Sliders = new ObservableCollection<Slider>();
             string initLine;
             // tries to read a line
