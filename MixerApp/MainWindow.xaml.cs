@@ -25,6 +25,8 @@ using CoreAudio;
 using CommunityToolkit.WinUI;
 using Windows.Storage.Streams;
 using Windows.Media.Audio;
+using Windows.Devices.WiFi;
+using System.Runtime.InteropServices;
 
 namespace MixerApp
 {
@@ -72,13 +74,13 @@ namespace MixerApp
                     switch (NoiseComboBox.SelectedIndex)
                     {
                         case 0:
-                            connection.DefaultJumpDistance = 6;
+                            connection.JumpDistance = 6;
                             break;
                         case 1:
-                            connection.DefaultJumpDistance = 12;
+                            connection.JumpDistance = 12;
                             break;
                         case 2:
-                            connection.DefaultJumpDistance = 24;
+                            connection.JumpDistance = 24;
                             break;
                     }
                 }
@@ -134,6 +136,16 @@ namespace MixerApp
             NewConnectionButton.IsEnabled = true;
             DisconnectButton.IsEnabled = false;
         }
+
+        private void OpenDocs_Button(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://mixer.misclick.cc") { UseShellExecute = true });
+        }
+
+        private void MisclickLink_Hyperlink(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://misclick.cc") { UseShellExecute = true });
+        }
     }
     public class Connection : SerialPort
     {
@@ -141,7 +153,7 @@ namespace MixerApp
         public ObservableCollection<Slider> Sliders { set; get; }
         private DispatcherQueue dispatcher;
         private Thread readThread;
-        public int DefaultJumpDistance { get; set; }
+        public int JumpDistance { get; set; }
         public Connection()
         {
             IsRunning = false;
@@ -244,18 +256,17 @@ namespace MixerApp
             // if true then create a new slider
             // otherwise return false and end connection
             string[] splitLine = initLine.Split("|");
-            int index = 0;
+            int index = 1;
             foreach (string line in splitLine)
             {
                 int Number;
                 if (Int32.TryParse(line, out Number) == true)
                 {
-                    Sliders.Add(new Slider()
+                    Sliders.Add(new Slider(this)
                     {
                         ParentConnection = this,
                         SliderValue = Number,
                         Name = "Slider " + index.ToString(),
-                        JumpDistance = DefaultJumpDistance
                     });
                     index++;
                 }
@@ -310,16 +321,17 @@ namespace MixerApp
         public int SliderValue { get; set; }// slider percentage: 0 to 100
         private int RawValue { get; set; } // raw value from 0 to 1024
         public Connection ParentConnection { get; set; }
-        public int JumpDistance { get; set; } // the amount of travel needed for the slider to update its value
         public string Name { get; set; }
         public ObservableCollection<AudioControl> AudioControls { get; set; }
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public string ControlsText { get { return AudioControls.Count.ToString() + " controls"; } }
 
-        public Slider()
+        public Slider(Connection Parent)
         {
+            ParentConnection = Parent;
             SliderValue = 0;
             RawValue = 0;
-            JumpDistance = 8;
+
             AudioControls = new ObservableCollection<AudioControl>();
         }
 
@@ -327,7 +339,7 @@ namespace MixerApp
         {
             int Distance = Math.Abs(NewRaw - RawValue);
             // this function updates the sliderValue only when the value changes
-            if (Distance > JumpDistance) 
+            if (Distance > ParentConnection.JumpDistance) 
             {
                 RawValue = NewRaw;
                 double floatRaw = (double)RawValue;
@@ -375,7 +387,15 @@ namespace MixerApp
                                 else if (audioControl.DeviceId != null)
                                 {
                                     MMDevice device = deviceEnumerator.GetDevice(audioControl.DeviceId);
-                                    device.AudioEndpointVolume.MasterVolumeLevelScalar = (float)SliderValue / 100.0f;
+                                    try
+                                    {
+                                        device.AudioEndpointVolume.MasterVolumeLevelScalar = (float)SliderValue / 100.0f;
+                                    }
+                                    catch (COMException)
+                                    {
+                                        continue;
+                                    }
+                                    
                                 }
                             }
                             break;
@@ -495,40 +515,28 @@ namespace MixerApp
         // templates for controls
         public void CreateProcessControl()
         {
-            AudioControls.Insert(0, new AudioControl(AudioControl.Type.PROCESS)
-            {
-                Parent = this,
-            });
-
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.PROCESS, this));
+            OnPropertyChanged("ControlsText");
         }
         public void CreateUnmappedControl()
         {
-            AudioControls.Insert(0, new AudioControl(AudioControl.Type.UNMAPPED)
-            {
-                Parent = this,
-            });
-
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.UNMAPPED, this));
+            OnPropertyChanged("ControlsText");
         }
         public void CreateSpeakerControl()
         {
-            AudioControls.Insert(0, new AudioControl(AudioControl.Type.SPEAKER)
-            {
-                Parent = this,
-            });
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.SPEAKER, this));
+            OnPropertyChanged("ControlsText");
         }
         public void CreateMicrophoneControl()
         {
-            AudioControls.Insert(0, new AudioControl(AudioControl.Type.MICROPHONE)
-            {
-                Parent = this,
-            });
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.MICROPHONE, this));
+            OnPropertyChanged("ControlsText");
         }
         public void CreateSystemControl()
         {
-            AudioControls.Insert(0, new AudioControl(AudioControl.Type.SYSTEM)
-            {
-                Parent = this,
-            });
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.SYSTEM, this));
+            OnPropertyChanged("ControlsText");
         }
         // event to update bind
         public void OnPropertyChanged(string propertyName = null)
@@ -556,8 +564,9 @@ namespace MixerApp
         public string Placeholder { get; set; }
         public string Glyph { get; set; }
         public string Mapping {  get; set; }
-        public AudioControl(Type type)
+        public AudioControl(Type type, Slider parent)
         {
+            Parent = parent;
             AllowSearch = true;
             Mapping = "";
             switch (type) { 
@@ -598,6 +607,7 @@ namespace MixerApp
         public void DeleteObject(object sender, RoutedEventArgs e)
         {
             Parent.AudioControls.Remove(this);
+            Parent.OnPropertyChanged("ControlsText");
         }
         // Updates Mapping
         public void TextBox_KeyUp(object sender, RoutedEventArgs e)
