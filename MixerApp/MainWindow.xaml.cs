@@ -23,6 +23,8 @@ using Microsoft.UI.Dispatching;
 using System.Linq.Expressions;
 using CoreAudio;
 using CommunityToolkit.WinUI;
+using Windows.Storage.Streams;
+using Windows.Media.Audio;
 
 namespace MixerApp
 {
@@ -250,6 +252,7 @@ namespace MixerApp
                 {
                     Sliders.Add(new Slider()
                     {
+                        ParentConnection = this,
                         SliderValue = Number,
                         Name = "Slider " + index.ToString(),
                         JumpDistance = DefaultJumpDistance
@@ -280,12 +283,33 @@ namespace MixerApp
             }
 
         }
+        public Collection<AudioControl> GetAudioControls(AudioControl.Type? filter = null)
+        {
+            Collection<AudioControl> controls = new Collection<AudioControl>();
+            foreach (Slider slider in Sliders)
+            {
+                foreach (AudioControl audioControl in slider.AudioControls)
+                {
+                    if (filter != null && audioControl.SliderType == filter)
+                    {
+                        controls.Add(audioControl);
+                    }
+                    else
+                    {
+                        controls.Add(audioControl);
+                    }
+                   
+                }
+            }
+            return controls;
+        }
 
     }
     public class Slider : INotifyPropertyChanged
     {
         public int SliderValue { get; set; }// slider percentage: 0 to 100
         private int RawValue { get; set; } // raw value from 0 to 1024
+        public Connection ParentConnection { get; set; }
         public int JumpDistance { get; set; } // the amount of travel needed for the slider to update its value
         public string Name { get; set; }
         public ObservableCollection<AudioControl> AudioControls { get; set; }
@@ -427,6 +451,44 @@ namespace MixerApp
                             }
                             break;
                         }
+                    case AudioControl.Type.UNMAPPED:
+                        {
+                            Collection<AudioControl> controls = ParentConnection.GetAudioControls(AudioControl.Type.PROCESS);
+                            MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+                            MMDevice device = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                            List<uint> SessionIds = new List<uint>();
+                            //get session id's
+                            foreach (AudioControl control in controls)
+                            {
+                                foreach (AudioSessionControl2 audioSession in device.AudioSessionManager2.Sessions)
+                                {
+                                    string Name;
+                                    try
+                                    {
+                                        Name = Process.GetProcessById((int)audioSession.ProcessID).ProcessName;
+                                    }
+                                    catch (ArgumentException)
+                                    {
+                                        continue;
+                                    }
+                                    if (control.Mapping.ToLower() == Name.ToLower())
+                                    {
+                                        //Debug.WriteLine(Name + " is mapped");
+                                        SessionIds.Add(audioSession.ProcessID);
+                                    }
+                                }
+                            }
+                            // compare id's
+                            foreach (AudioSessionControl2 audioSession in device.AudioSessionManager2.Sessions)
+                            {
+                                if (SessionIds.Contains(audioSession.ProcessID) == false &&
+                                    audioSession.IsSystemSoundsSession == false)
+                                {
+                                    audioSession.SimpleAudioVolume.MasterVolume = (float)SliderValue / 100.0f;
+                                }
+                            }
+                            break;
+                        }
                 }    
             }
         }
@@ -434,6 +496,14 @@ namespace MixerApp
         public void CreateProcessControl()
         {
             AudioControls.Insert(0, new AudioControl(AudioControl.Type.PROCESS)
+            {
+                Parent = this,
+            });
+
+        }
+        public void CreateUnmappedControl()
+        {
+            AudioControls.Insert(0, new AudioControl(AudioControl.Type.UNMAPPED)
             {
                 Parent = this,
             });
@@ -475,7 +545,8 @@ namespace MixerApp
             MICROPHONE,
             SPEAKER,
             SYSTEM,
-            PROCESS
+            PROCESS,
+            UNMAPPED
         }
         public bool AllowSearch { get; set; }
         public string DeviceId { get; set; }
@@ -514,6 +585,13 @@ namespace MixerApp
                     Placeholder = "Process Name";
                     Editable = true;
                     break;
+                case Type.UNMAPPED:
+                    SliderType = Type.UNMAPPED;
+                    Glyph = "\uE74C";
+                    Placeholder = "Unmapped Processes";
+                    Editable = false;
+                    break;
+
             }
         }
         // Delete itself from parent collection
@@ -532,5 +610,4 @@ namespace MixerApp
             Mapping = Text;
         }
     }
-    
 }

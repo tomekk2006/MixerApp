@@ -72,6 +72,11 @@
                                         <FontIcon Glyph="&#xECAA;" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
+                                <AppBarButton Label="Unmapped Processes" Click="{x:Bind CreateUnmappedControl}">
+                                    <AppBarButton.Icon>
+                                        <FontIcon Glyph="&#xE74C;" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
                                 <AppBarButton Label="New Speaker" Click="{x:Bind CreateSpeakerControl}">
                                     <AppBarButton.Icon>
                                         <FontIcon Glyph="&#xE7F5;" />
