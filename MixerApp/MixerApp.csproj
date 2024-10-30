@@ -16,6 +16,14 @@
     <UseWindowsForms>False</UseWindowsForms>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-29 184943.png" />
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-30 003120.png" />
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-30 003228.png" />
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-30 003240.png" />
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-30 003258.png" />
+    <Content Remove="Assets\Screenshots\Screenshot 2024-10-30 003404.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
