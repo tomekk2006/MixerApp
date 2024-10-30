@@ -1,5 +1,5 @@
 # MixerApp
-## Control the audio of apps and devices on windows.
+### Control the audio of apps and devices on windows.
 ![image](https://github.com/user-attachments/assets/5435eea7-b66b-488d-8a00-5a6c3a989982)
 ![image](https://github.com/user-attachments/assets/d5739435-ef22-4913-b2dd-5469e624b3b9)
 ![image](https://github.com/user-attachments/assets/1961948b-5853-4590-81b5-b534191e4679)
