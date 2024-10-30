@@ -27,9 +27,15 @@ using Windows.Storage.Streams;
 using Windows.Media.Audio;
 using Windows.Devices.WiFi;
 using System.Runtime.InteropServices;
+using H.NotifyIcon;
+using H.NotifyIcon.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
 
 namespace MixerApp
 {
+    [ObservableObject]
     public sealed partial class MainWindow : Window
     {
         ObservableCollection<Slider> Sliders { get; set; }
@@ -49,6 +55,7 @@ namespace MixerApp
             BaudRateNumberBox.Value = defaultSerial.BaudRate;
             
         }
+        
         // Create a new connection to a serial device
         private async void NewConnectionButton_Click(object sender, RoutedEventArgs e)
         {
@@ -125,6 +132,7 @@ namespace MixerApp
         // when window closes
         private void Window_Closed(object sender, WindowEventArgs args)
         {
+             TrayIcon.Dispose();
                 connection.Stop(); // make sure the connection is disconnected properly
         }
         // button that disconnects from the serial connection
@@ -137,6 +145,35 @@ namespace MixerApp
             DisconnectButton.IsEnabled = false;
         }
 
+        private void ShowHideWindow(object sender, RoutedEventArgs e)
+        {
+            if (this.Visible)
+            {
+                this.Hide();
+            }
+            else
+            {
+                this.Show();
+            }
+        }
+        [RelayCommand]
+        public void ShowHideWindow2()
+        {
+            if (this.Visible)
+            {
+                this.Hide();
+            }
+            else
+            {
+                this.Show();
+            }
+        }
+        private void CloseApp(object sender, RoutedEventArgs e)
+        {
+           
+            this.Close();
+        }
+
         private void OpenDocs_Button(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo("https://mixer.misclick.cc") { UseShellExecute = true });
@@ -146,6 +183,7 @@ namespace MixerApp
         {
             Process.Start(new ProcessStartInfo("https://misclick.cc") { UseShellExecute = true });
         }
+        
     }
     public class Connection : SerialPort
     {

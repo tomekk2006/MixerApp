@@ -9,8 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Closed="Window_Closed"
-    
-
+    xmlns:tb="using:H.NotifyIcon"
     >
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt"/>
@@ -137,7 +136,46 @@
                 </Grid>
             </DataTemplate>
         </Grid.Resources>
-         
+        <tb:TaskbarIcon
+            ToolTipText="Mixer"
+            x:FieldModifier="public"
+            IconSource="ms-appx:///Assets/Icon.ico"
+            ContextMenuMode="SecondWindow"
+            x:Name="TrayIcon"
+            LeftClickCommand="{x:Bind ShowHideWindow2Command}"
+            NoLeftClickDelay="True"
+            >
+            <tb:TaskbarIcon.ContextFlyout>
+                <MenuFlyout AreOpenCloseAnimationsEnabled="False">
+                    <MenuFlyoutItem
+                    Text="Mixer"
+                    IsEnabled="False"
+                    
+                    >
+                        <MenuFlyoutItem.Icon>
+                            <BitmapIcon UriSource="ms-appx:///Assets/Square44x44Logo.targetsize-32.png" ShowAsMonochrome="False"/>
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem
+                    Text="Show/Hide Window"
+                    Click="ShowHideWindow"
+                    >
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE737;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                    <MenuFlyoutItem
+                    Text="Exit"
+                    Click="CloseApp"
+                    >
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE711;" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </tb:TaskbarIcon.ContextFlyout>
+        </tb:TaskbarIcon>
         <!-- Title Bar -->
 
         <StackPanel Height="32" x:Name="TitleBar" Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2">
