@@ -142,7 +142,7 @@
             IconSource="ms-appx:///Assets/Icon.ico"
             ContextMenuMode="SecondWindow"
             x:Name="TrayIcon"
-            LeftClickCommand="{x:Bind ShowHideWindow2Command}"
+            LeftClickCommand="{x:Bind ShowHideWindowCommand}"
             NoLeftClickDelay="True"
             >
             <tb:TaskbarIcon.ContextFlyout>
@@ -159,7 +159,7 @@
                     <MenuFlyoutSeparator/>
                     <MenuFlyoutItem
                     Text="Show/Hide Window"
-                    Click="ShowHideWindow"
+                    Command="{x:Bind ShowHideWindowCommand}"
                     >
                         <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE737;" />
@@ -185,7 +185,16 @@
         <!-- Main Command Bar -->
         <CommandBar Grid.ColumnSpan="2" Grid.Row="1" Margin="0,0,0,32" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right" HorizontalContentAlignment="Left">
             <AppBarButton x:Name="NewConnectionButton" Icon="Add" Label="New Connection" Click="NewConnectionButton_Click"/>
-            <AppBarButton x:Name="DisconnectButton" Icon="Stop" Label="Disconnect" Click="DisconnectButton_Click" IsEnabled="False"/>
+            <AppBarButton x:Name="DisconnectButton" Icon="Stop" Label="Disconnect"  IsEnabled="False">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Disconnecting removes all audio controls permanently."  Margin="0,0,0,12" />
+                            <Button Content="Disconnect" Click="DisconnectButton_Click"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
         </CommandBar>
         
         <!-- Displays when there is no connection -->
