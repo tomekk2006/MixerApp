@@ -153,6 +153,7 @@ namespace MixerApp
 					AppStorage.Save(connection);
 				}
 				connection.Stop(); // make sure the connection is disconnected properly
+				connection.Dispose();
 			}
 			else
 			{
@@ -229,7 +230,7 @@ namespace MixerApp
 				}
 				catch (JsonException)
 				{
-					return;
+                    NewConnectionButton.IsEnabled = true;
 				}
 
 			}
