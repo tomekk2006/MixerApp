@@ -12,9 +12,9 @@
     xmlns:tb="using:H.NotifyIcon"
     >
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt"/>
+        <MicaBackdrop Kind="Base"/>
     </Window.SystemBackdrop>
-    <Grid x:Name="rootPanel" >
+    <Grid x:Name="rootPanel" Loaded="rootPanel_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
