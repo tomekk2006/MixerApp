@@ -24,6 +24,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <AppxPackageDir>C:\Users\tomas\source\repos\MixerApp\MixerApp\bin\PreviewRelease\</AppxPackageDir>
   </PropertyGroup>
     
   <ItemGroup>

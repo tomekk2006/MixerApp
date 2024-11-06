@@ -15,7 +15,7 @@
   <mp:PhoneIdentity PhoneProductId="d8161658-a273-4144-bdf1-d8b1aa338d24" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>DeejApp</DisplayName>
+    <DisplayName>Mixer App</DisplayName>
     <PublisherDisplayName>tomas</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
