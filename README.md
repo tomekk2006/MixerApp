@@ -1,9 +1,9 @@
 # MixerApp
 ### Control the audio of apps and devices on windows.
-This app is a gui version of Deej, a piece of software used to control audio devices using an arduino.
+This app is a gui version of [Deej](https://pages.github.com/](https://github.com/omriharel/deej)), a piece of software used to control audio devices using an arduino.
 I have made this to see if I can make a native windows application.
 > [!CAUTION]
-> Wouldn't recomment using it. Software has many flaws and crashes frequently!
+> Wouldn't recomment using it. Many has many flaws and crashes frequently! Use [Deej]([https://pages.github.com/](https://github.com/omriharel/deej)) instead.
 ### [showcase](https://github.com/tomekk2006/MixerApp/blob/master/showcase.gif)
 ![image](https://github.com/user-attachments/assets/d5739435-ef22-4913-b2dd-5469e624b3b9)
 ![image](https://github.com/user-attachments/assets/1961948b-5853-4590-81b5-b534191e4679)
