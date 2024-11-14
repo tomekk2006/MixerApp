@@ -17,14 +17,14 @@
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateKeyFile>MixerApp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <AppxPackageDir>C:\Users\tomas\source\repos\MixerApp\MixerApp\bin\PreviewRelease\</AppxPackageDir>
+    <AppxPackageDir>C:\Users\tomas\source\repos\MixerApp\MixerApp\bin\Release\</AppxPackageDir>
+    <PackageCertificateThumbprint>EF3F517BD80544B40D14E3DEA730328F73F04145</PackageCertificateThumbprint>
   </PropertyGroup>
     
   <ItemGroup>

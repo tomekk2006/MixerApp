@@ -208,12 +208,12 @@ namespace MixerApp
 
 		private void OpenDocs_Button(object sender, RoutedEventArgs e)
 		{
-			Process.Start(new ProcessStartInfo("https://mixer.misclick.cc") { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo("") { UseShellExecute = true });
 		}
 
 		private void MisclickLink_Hyperlink(object sender, RoutedEventArgs e)
 		{
-			Process.Start(new ProcessStartInfo("https://misclick.cc") { UseShellExecute = true });
+			Process.Start(new ProcessStartInfo("") { UseShellExecute = true });
 		}
 		private async void rootPanel_Loaded(object sender, RoutedEventArgs e)
 		{
