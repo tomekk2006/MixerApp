@@ -10,6 +10,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using ABI.Microsoft.UI.Xaml.Controls;
+using System.Diagnostics.CodeAnalysis;
+using Windows.Devices.Printers;
 
 namespace MixerApp
 {
@@ -28,6 +30,31 @@ namespace MixerApp
 			ControlQueue = new List<AppStorage.JsonAudioControl>();
 
 		}
+		// read until last character is
+		private string ReadUntilChar(char C)
+		{
+			string line = "";
+			char lastChar;
+			for (int i = 0; i < 2; i++)
+			{
+				line = "";
+                do
+                {
+                    line += ReadLine();
+                    try
+                    {
+                        lastChar = line.Last();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return line;
+                    }
+                } while (lastChar != C);
+            }
+            return line;
+		}
+
+
 		// This is a loop that asigns values from serial connection to each slider
 		// Runs on a separate thread
 		private void Read()
@@ -39,8 +66,8 @@ namespace MixerApp
 				string line;
 				try
 				{
-					DiscardInBuffer();
-					line = ReadLine();
+                    line = ReadUntilChar('\u000D');
+					this.DiscardInBuffer();
 				}
 				// if device disconnects
 				catch (OperationCanceledException)
@@ -48,8 +75,13 @@ namespace MixerApp
 					Stop();
 					continue;
 				}
-				// ignores time out
-				catch (TimeoutException)
+                catch (UnauthorizedAccessException)
+                {
+                    Stop();
+                    continue;
+                }
+                // ignores time out
+                catch (TimeoutException)
 				{
 					continue;
 				}
@@ -115,39 +147,63 @@ namespace MixerApp
 			}
 			Sliders = new ObservableCollection<Slider>();
 			string initLine;
-			// tries to read a line
-			try
+			int maxAttempts = 5;
+			for (int attempt = 1; true; attempt++)
 			{
-				initLine = ReadLine();
-			}
-			// when you can't read the line return false
-			catch (TimeoutException)
-			{
-				return false;
-			}
-			// split each value and check if value is an integer
-			// if true then create a new slider
-			// otherwise return false and end connection
-			string[] splitLine = initLine.Split("|");
-			int index = 1;
-			foreach (string line in splitLine)
-			{
-				int Number;
-				if (Int32.TryParse(line, out Number) == true)
+				Sliders.Clear();
+				DiscardInBuffer();
+				// tries to read a line
+				try
 				{
-					Sliders.Add(new Slider(this)
-					{
-						ParentConnection = this,
-						SliderValue = Number,
-						Name = "Slider " + index.ToString(),
-					});
-					index++;
+					initLine = ReadUntilChar('\u000D');
 				}
-				else
+				// when you can't read the line return false
+				catch (TimeoutException)
+				{
+					if (attempt == maxAttempts)
+					{
+						return false;
+					}
+					else
+					{
+						continue;
+					}
+					
+					
+				}
+				// split each value and check if value is an integer
+				// if true then create a new slider
+				// otherwise return false and end connection
+				string[] splitLine = initLine.Split("|");
+				int index = 1;
+				bool passed = true;
+				foreach (string line in splitLine)
+				{
+					int Number;
+					if (Int32.TryParse(line, out Number) == true)
+					{
+						Sliders.Add(new Slider(this)
+						{
+							ParentConnection = this,
+							SliderValue = Number,
+							Name = "Slider " + index.ToString(),
+						});
+						index++;
+					}
+					else
+					{
+						passed = false;
+						break;
+					}
+				}
+                if (passed)
+				{
+					break;
+				}
+				else if (!passed && attempt == maxAttempts)
 				{
 					return false;
 				}
-
 			}
 			foreach (AppStorage.JsonAudioControl control in ControlQueue) {
 				Slider slider;
